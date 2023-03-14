@@ -1,7 +1,7 @@
 use serde::Deserialize;
 use std::io;
 use std::io::BufReader;
-use std::io::{Read, Write};
+use std::io::Read;
 
 use crate::error::FF2MpvError;
 
