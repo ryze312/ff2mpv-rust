@@ -1,26 +1,25 @@
-use std::process::{Command, self};
-use ff2mpv_rust::{get_mpv_message, send_browser_message};
+use std::env;
+use std::process;
+
+use ff2mpv_rust::command::Command;
 
 fn main() {
-    let message = match get_mpv_message() {
-        Ok(msg) => msg,
-        Err(e) => {
-            eprintln!("{e}");
-            process::exit(-1)
-        }
-    };
+    let mut args = env::args();
+    args.next(); // Skip binary path
 
-    let mpv = Command::new("mpv")
-                    .arg(message.url)
-                    .spawn();
-
-    if let Err(e) = mpv {
+    let command_name = args.next().unwrap_or_default();
+    let command = get_command(&command_name);
+    if let Err(e) = command.execute() {
         eprintln!("{e}");
         process::exit(-1);
     }
+}
 
-    if let Err(e) = send_browser_message("ok") {
-        eprintln!("{e}");
-        process::exit(-1);
+fn get_command(name: &str) -> Command {
+    match name {
+        "help" => Command::ShowHelp,
+        "manifest" => Command::ShowManifest,
+        "validate" => Command::ValidateConfig,
+        _ => Command::FF2Mpv,
     }
 }
