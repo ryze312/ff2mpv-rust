@@ -5,7 +5,7 @@ fn main() {
     let message = match get_mpv_message() {
         Ok(msg) => msg,
         Err(e) => {
-            eprintln!("{}", e);
+            eprintln!("{e}");
             process::exit(-1)
         }
     };
@@ -15,12 +15,12 @@ fn main() {
                     .spawn();
 
     if let Err(e) = mpv {
-        eprintln!("{}", e);
+        eprintln!("{e}");
         process::exit(-1);
     }
 
     if let Err(e) = send_browser_message("ok") {
-        eprintln!("{}", e);
+        eprintln!("{e}");
         process::exit(-1);
     }
 }

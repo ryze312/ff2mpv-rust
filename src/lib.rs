@@ -9,12 +9,12 @@ pub struct MpvMessage {
 pub fn get_mpv_message() -> Result<MpvMessage, String> {
     let message = match get_browser_message() {
         Ok(msg) => msg,
-        Err(e) => return Err(format!("IO Error: {}", e))
+        Err(e) => return Err(format!("IO Error: {e}"))
     };
 
     match serde_json::from_str(&message) {
         Ok(msg) => Ok(msg),
-        Err(e) => Err(format!("JSON Error: {}", e))
+        Err(e) => Err(format!("JSON Error: {e}"))
     }
 }
 
@@ -36,7 +36,7 @@ pub fn send_browser_message(message: &str) -> io::Result<()> {
     let message = message.as_bytes();
     
     let mut stdout = io::stdout();
-    stdout.write(&length)?;
-    stdout.write(&message)?;
+    stdout.write_all(&length)?;
+    stdout.write_all(message)?;
     Ok(())
 }
