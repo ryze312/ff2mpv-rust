@@ -10,10 +10,6 @@ pub struct FF2MpvMessage {
     pub url: String,
 }
 
-pub fn send_reply() -> Result<(), io::Error> {
-    send_message("ok")
-}
-
 pub fn get_mpv_message() -> Result<FF2MpvMessage, FF2MpvError> {
     let message = read_message()?;
     let ff2mpv_message = serde_json::from_str(&message)?;
@@ -31,14 +27,4 @@ fn read_message() -> Result<String, io::Error> {
     let mut string = String::with_capacity(length as usize);
     reader.read_to_string(&mut string)?;
     Ok(string)
-}
-
-fn send_message(message: &str) -> Result<(), io::Error> {
-    let length = (message.len() as u32).to_ne_bytes();
-    let message = message.as_bytes();
-
-    let mut stdout = io::stdout();
-    stdout.write_all(&length)?;
-    stdout.write_all(message)?;
-    Ok(())
 }
