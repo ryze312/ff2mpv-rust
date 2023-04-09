@@ -11,7 +11,8 @@ pub struct FF2MpvMessage {
 }
 
 pub fn send_reply() -> Result<(), io::Error> {
-    send_message("ok")
+    // "ok" formatted as a JSON string
+    send_message("\"ok\"")
 }
 
 pub fn get_mpv_message() -> Result<FF2MpvMessage, FF2MpvError> {

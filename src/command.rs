@@ -64,12 +64,15 @@ impl Command {
         let config = Config::build();
         let ff2mpv_message = browser::get_mpv_message()?;
         Command::launch_mpv(config.player_command, config.player_args, &ff2mpv_message.url)?;
+        browser::send_reply()?;
         
         Ok(())
     }
 
     fn launch_mpv(command: String, args: Vec<String>, url: &str) -> Result<(), io::Error> {
         process::Command::new(command)
+            .stdout(process::Stdio::null())
+            .stderr(process::Stdio::null())
             .args(args)
             .arg(url)
             .spawn()?;
