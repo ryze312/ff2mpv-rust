@@ -70,12 +70,25 @@ impl Command {
     }
 
     fn launch_mpv(command: String, args: Vec<String>, url: &str) -> Result<(), io::Error> {
-        process::Command::new(command)
-            .stdout(process::Stdio::null())
-            .stderr(process::Stdio::null())
-            .args(args)
-            .arg(url)
-            .spawn()?;
+        let mut command = process::Command::new(command);
+
+        command.stdout(process::Stdio::null());
+        command.stderr(process::Stdio::null());
+        command.args(args);
+        command.arg(url);
+
+        // NOTE: On Windows, browser spawns process into a Job object.
+        // NOTE: We need to detach player from the job, so it won't get killed after we're done, 
+        // NOTE: See https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging#closing_the_native_app
+        #[cfg(target_family = "windows")] 
+        {
+            use std::os::windows::process::CommandExt;
+            const CREATE_BREAKAWAY_FROM_JOB: u32 = 0x01000000;
+
+            command.creation_flags(CREATE_BREAKAWAY_FROM_JOB);
+        }
+
+        command.spawn()?;
 
         Ok(())
     }
