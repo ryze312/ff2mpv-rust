@@ -1,6 +1,6 @@
 use std::io;
 use std::fmt;
-use std::fmt::Display;
+use std::fmt::Debug;
 
 pub enum FF2MpvError {
     NoConfig,
@@ -20,7 +20,7 @@ impl From<serde_json::Error> for FF2MpvError {
     }
 }
 
-impl Display for FF2MpvError {
+impl Debug for FF2MpvError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::NoConfig => write!(f, "Config doesn't exist"),
