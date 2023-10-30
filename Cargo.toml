@@ -7,7 +7,10 @@ edition = "2021"
 serde = { version = "1.0.152", features = ["derive"] }
 serde_json = { version = "1.0.93", features = ["preserve_order"] }
 
-[profile.release-full]
-inherits = "release"
+[profile.dev-optimized]
+inherits = "dev"
+opt-level = 3
+
+[profile.release]
 strip = "symbols"
 lto = "fat"
