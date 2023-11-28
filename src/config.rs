@@ -6,30 +6,26 @@ use serde::Deserialize;
 use crate::error::FF2MpvError;
 
 #[derive(Deserialize)]
+#[serde(default)]
 pub struct Config {
-    #[serde(default = "default_player_command")]
     pub player_command: String,
-
-    #[serde(default = "default_player_args")]
     pub player_args: Vec<String>,
 }
 
 impl Default for Config {
     fn default() -> Self {
         Self {
-            player_command: default_player_command(),
-            player_args: default_player_args(),
+            player_command: "mpv".to_owned(),
+            player_args: vec![]
         }
     }
 }
 
 impl Config {
+    const CONFIG_FILENAME: &str = "ff2mpv-rust.json";
+
     pub fn build() -> Self {
-        if let Ok(config) = Config::parse_config_file() {
-            config
-        } else {
-            Config::default()
-        }
+        Config::parse_config_file().unwrap_or_default()
     }
 
     pub fn parse_config_file() -> Result<Self, FF2MpvError> {
@@ -57,7 +53,7 @@ impl Config {
             path.push("/etc");
         }
 
-        path.push("ff2mpv-rust.json");
+        path.push(Self::CONFIG_FILENAME);
         path
     }
 
@@ -67,15 +63,7 @@ impl Config {
         let appdata = env::var("APPDATA").unwrap();
 
         path.push(appdata);
-        path.push("ff2mpv-rust.json");
+        path.push(Self::CONFIG_FILENAME);
         path
     }
-}
-
-fn default_player_command() -> String {
-    "mpv".to_owned()
-}
-
-fn default_player_args() -> Vec<String> {
-    vec![]
 }
