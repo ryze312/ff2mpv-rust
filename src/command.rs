@@ -31,7 +31,8 @@ impl Command {
         println!("Usage: ff2mpv-rust <command>");
         println!("Commands:");
         println!("  help: prints help message");
-        println!("  manifest: prints manifest for browser configuration");
+        println!("  manifest: prints manifest for Firefox configuration");
+        println!("  manifest_chromium: prints manifest for Chromium/Chrome configuration");
         println!("  validate: checks configration file for validity");
         println!("Note: Invalid commands won't fail");
         println!("Note: It will assume that binary is called from browser, blocking for input");

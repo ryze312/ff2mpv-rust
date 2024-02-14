@@ -18,6 +18,11 @@ After that get native messasing host manifest:
 ```
 ff2mpv-rust manifest
 ```
+Or for Chromium/Chrome:
+```
+ff2mpv-rust manifest_chromium
+```
+
 Install it following manual installation instructions on [ff2mpv wiki](https://github.com/woodruffw/ff2mpv/wiki).
 
 # Configuration
@@ -35,7 +40,8 @@ See [example configuration](ff2mpv-rust.json).
 ff2mpv-rust provides command line interface with following commands:
 ```
 help: prints help message
-manifest: prints manifest for browser configuration
+manifest: prints manifest for Firefox configuration
+manifest_chromium: prints manifest for Chromium/Chrome configuration
 validate: checks configration file for validity
 ```
 Note that it won't fail on invalid commands, but instead assume it is called from browser, blocking the input.
