@@ -83,6 +83,7 @@ impl Command {
 
         command.stdout(process::Stdio::null());
         command.stderr(process::Stdio::null());
+        command.arg("--no-terminal");
         command.args(args);
         command.arg("--");
         command.arg(url);
