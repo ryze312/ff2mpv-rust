@@ -22,7 +22,7 @@ impl Default for Config {
 }
 
 impl Config {
-    const CONFIG_FILENAME: &str = "ff2mpv-rust.json";
+    const CONFIG_FILENAME: &'static str = "ff2mpv-rust.json";
 
     pub fn build() -> Self {
         Config::parse_config_file().unwrap_or_default()
