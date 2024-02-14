@@ -10,6 +10,7 @@ use crate::error::FF2MpvError;
 pub enum Command {
     ShowHelp,
     ShowManifest,
+    ShowManifestChromium,
     ValidateConfig,
     FF2Mpv
 }
@@ -19,7 +20,8 @@ impl Command {
     pub fn execute(&self) -> Result<(), FF2MpvError> {
         match self {
             Command::ShowHelp => Self::show_help(),
-            Command::ShowManifest => Self::show_manifest(),
+            Command::ShowManifest => Self::show_manifest(false),
+            Command::ShowManifestChromium => Self::show_manifest(true),
             Command::ValidateConfig => Self::validate_config(),
             Command::FF2Mpv => Self::ff2mpv()
         }
@@ -37,14 +39,20 @@ impl Command {
         Ok(())
     }
 
-    fn show_manifest() -> Result<(), FF2MpvError>{
+    fn show_manifest(chromium: bool) -> Result<(), FF2MpvError> {
         let executable_path = env::current_exe()?;
+        let allowed_keyvalue = if chromium {
+            ("allowed_origins", "chrome-extension://ephjcajbkgplkjmelpglennepbpmdpjg")
+        } else {
+            ("allowed_extensions", "ff2mpv@yossarian.net")
+        };
+
         let manifest = json!({
             "name": "ff2mpv",
             "description": "ff2mpv's external manifest",
             "path": executable_path,
             "type": "stdio",
-            "allowed_extensions": ["ff2mpv@yossarian.net"]
+            allowed_keyvalue.0: [allowed_keyvalue.1]
         });
 
         let manifest = serde_json::to_string_pretty(&manifest)?;

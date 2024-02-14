@@ -19,6 +19,7 @@ fn get_command(name: &str) -> Command {
     match name {
         "help" => Command::ShowHelp,
         "manifest" => Command::ShowManifest,
+        "manifest_chromium" => Command::ShowManifestChromium,
         "validate" => Command::ValidateConfig,
         _ => Command::FF2Mpv,
     }
