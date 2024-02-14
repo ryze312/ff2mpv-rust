@@ -65,7 +65,7 @@ impl Command {
         let ff2mpv_message = browser::get_mpv_message()?;
         Command::launch_mpv(config.player_command, config.player_args, &ff2mpv_message.url)?;
         browser::send_reply()?;
-        
+
         Ok(())
     }
 
@@ -75,12 +75,13 @@ impl Command {
         command.stdout(process::Stdio::null());
         command.stderr(process::Stdio::null());
         command.args(args);
+        command.arg("--");
         command.arg(url);
 
         // NOTE: On Windows, browser spawns process into a Job object.
-        // NOTE: We need to detach player from the job, so it won't get killed after we're done, 
+        // NOTE: We need to detach player from the job, so it won't get killed after we're done,
         // NOTE: See https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging#closing_the_native_app
-        #[cfg(target_family = "windows")] 
+        #[cfg(target_family = "windows")]
         {
             use std::os::windows::process::CommandExt;
             const CREATE_BREAKAWAY_FROM_JOB: u32 = 0x01000000;
