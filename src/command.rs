@@ -1,7 +1,7 @@
+use serde_json::{self, json};
 use std::env;
 use std::io;
 use std::process;
-use serde_json::{self, json};
 
 use crate::browser;
 use crate::config::Config;
@@ -12,9 +12,8 @@ pub enum Command {
     ShowManifest,
     ShowManifestChromium,
     ValidateConfig,
-    FF2Mpv
+    FF2Mpv,
 }
-
 
 impl Command {
     pub fn execute(&self) -> Result<(), FF2MpvError> {
@@ -23,7 +22,7 @@ impl Command {
             Command::ShowManifest => Self::show_manifest(false),
             Command::ShowManifestChromium => Self::show_manifest(true),
             Command::ValidateConfig => Self::validate_config(),
-            Command::FF2Mpv => Self::ff2mpv()
+            Command::FF2Mpv => Self::ff2mpv(),
         }
     }
 
@@ -43,7 +42,10 @@ impl Command {
     fn show_manifest(chromium: bool) -> Result<(), FF2MpvError> {
         let executable_path = env::current_exe()?;
         let allowed_keyvalue = if chromium {
-            ("allowed_origins", "chrome-extension://ephjcajbkgplkjmelpglennepbpmdpjg")
+            (
+                "allowed_origins",
+                "chrome-extension://ephjcajbkgplkjmelpglennepbpmdpjg",
+            )
         } else {
             ("allowed_extensions", "ff2mpv@yossarian.net")
         };
@@ -72,7 +74,8 @@ impl Command {
     fn ff2mpv() -> Result<(), FF2MpvError> {
         let config = Config::build();
         let ff2mpv_message = browser::get_mpv_message()?;
-        Command::launch_mpv(config.player_command, config.player_args, &ff2mpv_message.url)?;
+        let args = [config.player_args, ff2mpv_message.options].concat();
+        Command::launch_mpv(config.player_command, args, &ff2mpv_message.url)?;
         browser::send_reply()?;
 
         Ok(())
