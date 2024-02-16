@@ -27,8 +27,9 @@ fn read_message() -> Result<String, io::Error> {
     stdin.read_exact(&mut len)?;
     let len = u32::from_ne_bytes(len);
 
+    let mut reader = stdin.take(len as u64);
     let mut msg = String::with_capacity(len as usize);
-    stdin.take(len as u64).read_to_string(&mut msg)?;
+    reader.read_to_string(&mut msg)?;
     Ok(msg)
 }
 
