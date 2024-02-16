@@ -8,6 +8,7 @@ use crate::error::FF2MpvError;
 #[derive(Deserialize)]
 pub struct FF2MpvMessage {
     pub url: String,
+    pub options: Vec<String>,
 }
 
 pub fn send_reply() -> Result<(), io::Error> {
