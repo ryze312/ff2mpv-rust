@@ -1,7 +1,7 @@
-use serde_json::{self, json};
 use std::env;
 use std::io;
 use std::process;
+use serde_json::{self, json};
 
 use crate::browser;
 use crate::config::Config;
