@@ -1,7 +1,6 @@
+use std::io::{self, Read, Write};
+
 use serde::Deserialize;
-use std::io;
-use std::io::BufReader;
-use std::io::{Read, Write};
 
 use crate::error::FF2MpvError;
 
@@ -23,23 +22,23 @@ pub fn get_mpv_message() -> Result<FF2MpvMessage, FF2MpvError> {
 }
 
 fn read_message() -> Result<String, io::Error> {
-    let mut stdin = io::stdin();
-    let mut buf: [u8; 4] = [0; 4];
-    stdin.read_exact(&mut buf)?;
+    let mut stdin = io::stdin().lock();
 
-    let length = u32::from_ne_bytes(buf);
-    let mut reader = BufReader::new(stdin.take(length as u64));
+    let mut len = 0_u32.to_ne_bytes();
+    stdin.read_exact(&mut len)?;
+    let len = u32::from_ne_bytes(len);
 
-    let mut string = String::with_capacity(length as usize);
-    reader.read_to_string(&mut string)?;
-    Ok(string)
+    let mut reader = stdin.take(len as u64);
+    let mut msg = String::with_capacity(len as usize);
+    reader.read_to_string(&mut msg)?;
+    Ok(msg)
 }
 
 fn send_message(message: &str) -> Result<(), io::Error> {
     let length = (message.len() as u32).to_ne_bytes();
     let message = message.as_bytes();
 
-    let mut stdout = io::stdout();
+    let mut stdout = io::stdout().lock();
     stdout.write_all(&length)?;
     stdout.write_all(message)?;
     Ok(())
