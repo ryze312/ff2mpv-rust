@@ -44,7 +44,7 @@ impl Command {
         let allowed_keyvalue = if chromium {
             (
                 "allowed_origins",
-                "chrome-extension://ephjcajbkgplkjmelpglennepbpmdpjg",
+                "chrome-extension://ephjcajbkgplkjmelpglennepbpmdpjg/",
             )
         } else {
             ("allowed_extensions", "ff2mpv@yossarian.net")
