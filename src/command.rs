@@ -92,19 +92,26 @@ impl Command {
         command.arg("--");
         command.arg(url);
 
-        // NOTE: On Windows, browser spawns process into a Job object.
-        // NOTE: We need to detach player from the job, so it won't get killed after we're done,
-        // NOTE: See https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging#closing_the_native_app
-        #[cfg(windows)]
-        {
-            use std::os::windows::process::CommandExt;
-            const CREATE_BREAKAWAY_FROM_JOB: u32 = 0x01000000;
-
-            command.creation_flags(CREATE_BREAKAWAY_FROM_JOB);
-        }
+        Command::detach_mpv(&mut command);
 
         command.spawn()?;
 
         Ok(())
+    }
+
+    // NOTE: Make sure the subprocess is not killed.
+    //       See https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging#closing_the_native_app
+
+    #[cfg(unix)]
+    fn detach_mpv(command: &mut process::Command) {
+        use std::os::unix::process::CommandExt;
+        command.process_group(0);
+    }
+
+    #[cfg(windows)]
+    fn detach_mpv(command: &mut process::Command) {
+        use std::os::windows::process::CommandExt;
+        use windows::Win32::System::Threading::CREATE_BREAKAWAY_FROM_JOB;
+        command.creation_flags(CREATE_BREAKAWAY_FROM_JOB.0);
     }
 }
