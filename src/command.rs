@@ -1,7 +1,8 @@
 use std::env;
 use std::io;
 use std::process;
-use serde_json::{self, json};
+
+use serde_json::json;
 
 use crate::browser;
 use crate::config::Config;
@@ -94,7 +95,7 @@ impl Command {
         // NOTE: On Windows, browser spawns process into a Job object.
         // NOTE: We need to detach player from the job, so it won't get killed after we're done,
         // NOTE: See https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging#closing_the_native_app
-        #[cfg(target_family = "windows")]
+        #[cfg(windows)]
         {
             use std::os::windows::process::CommandExt;
             const CREATE_BREAKAWAY_FROM_JOB: u32 = 0x01000000;
