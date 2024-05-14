@@ -1,6 +1,7 @@
 use std::env;
 use std::fs;
 use std::path::PathBuf;
+
 use serde::Deserialize;
 
 use crate::error::FF2MpvError;
@@ -16,7 +17,7 @@ impl Default for Config {
     fn default() -> Self {
         Self {
             player_command: "mpv".to_owned(),
-            player_args: vec![]
+            player_args: vec![],
         }
     }
 }
@@ -40,7 +41,7 @@ impl Config {
         Ok(config)
     }
 
-    #[cfg(target_family = "unix")]
+    #[cfg(unix)]
     fn get_config_location() -> PathBuf {
         let mut path = PathBuf::new();
 
@@ -57,7 +58,7 @@ impl Config {
         path
     }
 
-    #[cfg(target_family = "windows")]
+    #[cfg(windows)]
     fn get_config_location() -> PathBuf {
         let mut path = PathBuf::new();
         let appdata = env::var("APPDATA").unwrap();

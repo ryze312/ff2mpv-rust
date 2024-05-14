@@ -1,6 +1,6 @@
-use std::io;
 use std::fmt;
 use std::fmt::Display;
+use std::io;
 
 pub enum FF2MpvError {
     NoConfig,
