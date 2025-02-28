@@ -17,7 +17,7 @@ impl Default for Config {
     fn default() -> Self {
         Self {
             player_command: "mpv".to_owned(),
-            player_args: vec![],
+            player_args: vec![String::from("--no-terminal"), String::from("--")],
         }
     }
 }
