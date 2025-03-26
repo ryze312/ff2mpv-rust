@@ -1,4 +1,4 @@
 {
     "player_command": "mpv",
-    "player_args": ["--no-config", "--fullscreen"]
+    "player_args": ["--no-terminal", "--"]
 }

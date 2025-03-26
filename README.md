@@ -34,7 +34,9 @@ On Linux configuration file is searched in such order:
 
 On Windows configuration file should be placed at: %APPDATA%/ff2mpv-rust.json.
 
-See [example configuration](ff2mpv-rust.json).
+See [default configuration](ff2mpv-rust.json).
+Note that default configuration passes `--` as last argument in order to prevent argument injection.
+When editing you should either keep it or use a similar argument for the player you want to use.
 
 # Command line interface
 ff2mpv-rust provides command line interface with following commands:
