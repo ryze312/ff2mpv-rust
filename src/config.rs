@@ -1,5 +1,6 @@
 use std::env;
 use std::fs;
+use std::io::ErrorKind;
 use std::path::PathBuf;
 
 use serde::Deserialize;
@@ -31,11 +32,18 @@ impl Config {
 
     pub fn parse_config_file() -> Result<Self, FF2MpvError> {
         let config_path = Config::get_config_location();
-        if !config_path.exists() {
-            return Err(FF2MpvError::NoConfig);
-        }
+        let string = match fs::read_to_string(config_path) {
+            Ok(string) => string,
 
-        let string = fs::read_to_string(config_path)?;
+            Err(e) if e.kind() == ErrorKind::NotFound => {
+                return Err(FF2MpvError::NoConfig);
+            }
+
+            Err(e) => {
+                return Err(FF2MpvError::IOError(e));
+            }
+        };
+
         let config = serde_json::from_str(&string)?;
 
         Ok(config)
