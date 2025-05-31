@@ -27,7 +27,21 @@ impl Config {
     const CONFIG_FILENAME: &str = "ff2mpv-rust.json";
 
     pub fn build() -> Self {
-        Config::parse_config_file().unwrap_or_default()
+        match Config::parse_config_file() {
+            Ok(config) => config,
+
+            Err(FF2MpvError::NoConfig) => {
+                eprintln!("Config not found, using defaults");
+                Config::default()
+            }
+
+            Err(e) => {
+                eprintln!("Error occured while parsing config, using defaults");
+                eprintln!("{}", e);
+
+                Config::default()
+            }
+        }
     }
 
     pub fn parse_config_file() -> Result<Self, FF2MpvError> {
