@@ -28,12 +28,13 @@ fn read_message() -> Result<String, io::Error> {
     stdin.read_exact(&mut len)?;
     let len = u32::from_ne_bytes(len);
 
-    let mut reader = stdin.take(len as u64);
+    let mut reader = stdin.take(len.into());
     let mut msg = String::with_capacity(len as usize);
     reader.read_to_string(&mut msg)?;
     Ok(msg)
 }
 
+#[allow(clippy::cast_possible_truncation, reason = "Truncation is safe, at most it will only truncate the message")]
 fn send_message(message: &str) -> Result<(), io::Error> {
     let length = (message.len() as u32).to_ne_bytes();
     let message = message.as_bytes();

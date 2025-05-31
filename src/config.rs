@@ -26,6 +26,7 @@ impl Default for Config {
 impl Config {
     const CONFIG_FILENAME: &str = "ff2mpv-rust.json";
 
+    #[must_use]
     pub fn build() -> Self {
         match Config::parse_config_file() {
             Ok(config) => config,
@@ -37,7 +38,7 @@ impl Config {
 
             Err(e) => {
                 eprintln!("Error occured while parsing config, using defaults");
-                eprintln!("{}", e);
+                eprintln!("{e}");
 
                 Config::default()
             }

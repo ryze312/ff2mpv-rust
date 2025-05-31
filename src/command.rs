@@ -16,6 +16,7 @@ pub enum Command {
     FF2Mpv,
 }
 
+#[allow(clippy::unnecessary_wraps, reason = "More readable in show_help")]
 impl Command {
     pub fn execute(&self) -> Result<(), FF2MpvError> {
         match self {
