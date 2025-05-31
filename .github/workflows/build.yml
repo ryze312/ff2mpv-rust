@@ -1,0 +1,78 @@
+name: Build and check ff2mpv-rust
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+
+          - windows-latest
+
+    runs-on: ${{ matrix.os }}
+    env:
+      ARCH: >-
+        ${{
+          endsWith(matrix.os, 'latest') && 'x86_64' ||
+          endsWith(matrix.os, 'arm') && 'aarch64' ||
+          'unknown'
+        }}
+
+      VENDOR: ${{ startsWith(matrix.os, 'windows') && 'pc' || 'unknown' }}
+
+      OS: >-
+        ${{
+          startsWith(matrix.os, 'ubuntu') && 'linux' ||
+          startsWith(matrix.os, 'windows') && 'windows' ||
+          'unknown'
+        }}
+
+      TARGET_EXT: ${{ startsWith(matrix.os, 'windows') && '.exe' || '' }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set environment variables
+        shell: bash
+        run: |
+          export BASE_TRIPLE=${{ env.ARCH }}-${{ env.VENDOR }}-${{ env.OS }}
+          echo "TRIPLE=$BASE_TRIPLE-gnu" >> $GITHUB_ENV
+          echo "MUSL_TRIPLE=$BASE_TRIPLE-musl" >> $GITHUB_ENV
+
+      - name: Build
+        run: cargo build --target ${{ env.TRIPLE }}
+
+      - name: Build release
+        run: cargo build --release --target ${{ env.TRIPLE }}
+
+      - name: Build release (musl)
+        if: env.OS == 'linux'
+        run: |
+          sudo apt-get install -y musl
+          rustup target add ${{ env.MUSL_TRIPLE }}
+          cargo build --release --target ${{ env.MUSL_TRIPLE }}
+
+      - name: Run Clippy
+        run: cargo clippy --target ${{ env.TRIPLE }}
+
+      - name: Upload release binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ff2mpv-rust-${{ env.TRIPLE }}${{ env.TARGET_EXT }}
+          path: target/${{ env.TRIPLE }}/release/ff2mpv-rust${{ env.TARGET_EXT }}
+
+      - name: Upload release binary (musl)
+        uses: actions/upload-artifact@v4
+        if: env.OS == 'linux'
+        with:
+          name: ff2mpv-rust-${{ env.MUSL_TRIPLE }}${{ env.TARGET_EXT }}
+          path: target/${{ env.MUSL_TRIPLE }}/release/ff2mpv-rust${{ env.TARGET_EXT }}
