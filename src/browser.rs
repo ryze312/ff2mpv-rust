@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 use crate::error::FF2MpvError;
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct FF2MpvMessage {
     pub url: String,
     pub options: Vec<String>,

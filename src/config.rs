@@ -7,18 +7,34 @@ use serde::Deserialize;
 
 use crate::error::FF2MpvError;
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 #[serde(default)]
 pub struct Config {
+    pub log_level: String,
     pub player_command: String,
     pub player_args: Vec<String>,
+    pub ytdl_path: String,
+    pub ytdl_cookies_from_browser: String,
+
+    /// Optional flag that when set will force cookies to be re-exported via yt-dlp for the given
+    /// browser ([`ytdl_cookies_from_browser`]) and pass them as input to the MPV command.
+    /// You probably don't need ths and shouldn't as it creates a temporary file[^1] that contains
+    /// cookies for the website you're trying to playback content on.
+    ///
+    /// [^1]: The temporary file is deleted as soon as this middle-man layer has completed executing
+    /// the mpv command. For more details around the temporary file, see <https://docs.rs/tempfile/3.27.0/tempfile/struct.NamedTempFile.html#security-1>
+    pub force_inject_cookies: Option<bool>,
 }
 
 impl Default for Config {
     fn default() -> Self {
         Self {
+            log_level: "info".to_string(),
             player_command: "mpv".to_owned(),
             player_args: vec![String::from("--no-terminal"), String::from("--")],
+            ytdl_path: "yt-dlp".to_string(),
+            ytdl_cookies_from_browser: "firefox::none".to_string(),
+            force_inject_cookies: None,
         }
     }
 }
